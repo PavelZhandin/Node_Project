@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-// const ejs = require('ejs');
+const morgan = require('morgan'); 
 
 const app = express();
 const PORT = 3000;
@@ -13,11 +13,10 @@ app.listen(PORT,  (error)=>{
   error ? console.error(error) : console.log(`listening to port ${PORT}`);
 });
 
-app.use((req, res, next)=>{
-  console.log(`path: ${req.path}`);
-  console.log(`method: ${req.method}`);
-  next();
-});
+
+
+app.use(express.static('styles'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
 
 
