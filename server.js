@@ -13,6 +13,14 @@ app.listen(PORT,  (error)=>{
   error ? console.error(error) : console.log(`listening to port ${PORT}`);
 });
 
+app.use((req, res, next)=>{
+  console.log(`path: ${req.path}`);
+  console.log(`method: ${req.method}`);
+  next();
+});
+
+
+
 app.get('/', (req, res)=>{
   const title = "Home";
   res.render(createPath('index'), {title});
