@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Node.js Course | <%= title %></title>
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/main.css">
-</head>
+  <%- include('./partials/head.ejs') %>
 <body>
   <%- include('./partials/nav.ejs') %>
   <h1>Posts:</h1>
   <ul>
-    <li>
+
+    <% if (posts.length) { %>
+      <% posts.forEach(({ id , text, date, title, author, contacts }) => { %>
+        <li>
+        <article>
+          <h2>
+            <a href="/posts/<%= id%>"><%= title %></a>
+          </h2>
+          <p><%= text %></p>
+          <div class="info">
+            <span><%= date %></span>
+            <span><%= author %></span>
+          </div>
+        </article>
+      </li>
+      <% }) %>
+    <% } %>
+
+    <!-- <li>
       <article>
         <h2>
           <a href="/posts/1">Post title</a>
@@ -22,7 +34,7 @@
           <span>Yauhen</span>
         </div>
       </article>
-    </li>
+    </li> -->
   </ul>
 </body>
 </html>
