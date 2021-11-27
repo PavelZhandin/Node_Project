@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-// const ejs = require('ejs');
+const morgan = require('morgan'); 
 
 const app = express();
 const PORT = 3000;
@@ -12,6 +12,13 @@ const createPath = (page) => path.resolve(__dirname, 'ejs-views', `${page}.ejs`)
 app.listen(PORT,  (error)=>{
   error ? console.error(error) : console.log(`listening to port ${PORT}`);
 });
+
+
+
+app.use(express.static('styles'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+
+
 
 app.get('/', (req, res)=>{
   const title = "Home";
