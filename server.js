@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const Post = require('./models/post');
 
 const app = express();
 const PORT = 3000;
@@ -22,7 +23,7 @@ app.listen(PORT,  (error)=>{
 });
 
 app.use(express.static('styles'));
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+// app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(express.urlencoded({extended: false}));
 
 
@@ -75,14 +76,15 @@ app.get('/posts', (req,res)=>{
 
 app.post('/add-post', (req,res)=>{
   const {title, author, text} = req.body;
-  const post = {
-    id: new Date(),
-    date : (new Date()).toLocaleDateString(),
-    title, 
-    author, 
-    text,
-  }
-  res.render(createPath('post1'), {post, title});
+  const post = new Post({title , author , text});
+  post
+    .save()
+    .then((result) => res.send(result))
+    .catch((error) => {
+      console.log(error);
+      res.render(createPath('error'), {title: "Error"})
+    });
+  // res.render(createPath('post1'), {post, title});
 });
 
 app.get('/add-post', (req,res)=>{
