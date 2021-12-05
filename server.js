@@ -7,6 +7,7 @@ const createPath = require('./helpers/create-path');
 
 const postRoutes = require('./routes/post-routes');
 const contactRoutes = require('./routes/contact-routes');
+const postApiRoutes = require('./routes/api-post-routes');
 
 const app = express();
 
@@ -38,7 +39,7 @@ app.use(methodOverride('_method'));
 
 app.use(postRoutes);
 app.use(contactRoutes);
-
+app.use(postApiRoutes);
 app.get('/', (req, res)=>{
   const title = "Home";
   res.render(createPath('index'), {title});
