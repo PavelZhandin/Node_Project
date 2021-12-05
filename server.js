@@ -1,16 +1,17 @@
 const express = require('express');
-const path = require('path');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const Post = require('./models/post');
-const Contact = require('./models/Contact');
 const methodOverride = require('method-override');
+const createPath = require('./helpers/create-path');
+
 
 const postRoutes = require('./routes/post-routes');
+const contactRoutes = require('./routes/contact-routes');
+
+const app = express();
 
 app.set('view engine', 'ejs');
 
-const app = express();
 const PORT = 3000;
 
 
@@ -21,7 +22,7 @@ mongoose
   .then((res)=> console.log('Successfuly connected to DB'))
   .catch((error)=> console.log('Error connecting to'))
 
-const createPath = (page) => path.resolve(__dirname, 'ejs-views', `${page}.ejs`);
+
 
 app.listen(PORT,  (error)=>{
   error ? console.error(error) : console.log(`listening to port ${PORT}`);
@@ -35,22 +36,14 @@ app.use(express.urlencoded({extended: false}));
 
 app.use(methodOverride('_method'));
 
+app.use(postRoutes);
+app.use(contactRoutes);
+
 app.get('/', (req, res)=>{
   const title = "Home";
   res.render(createPath('index'), {title});
 });
 
-app.get('/contacts', (req, res)=>{
-  const title = "Contacts";
-  Contact
-      .find()
-      .then((contacts)=> res.render(createPath('contacts'), {contacts, title}))
-      .catch((error) => {
-        console.log(error);
-        res.render(createPath('error'), {title: "Error"})
-      });
- 
-})
 
 app.get('/about-us', (req, res)=>{
   res.redirect('/contacts');
