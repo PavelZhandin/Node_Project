@@ -1,11 +1,25 @@
 const express = require('express');
 const path = require('path');
-const morgan = require('morgan'); 
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const Post = require('./models/post');
+const Contact = require('./models/Contact');
+const methodOverride = require('method-override');
+
+const postRoutes = require('./routes/post-routes');
+
+app.set('view engine', 'ejs');
 
 const app = express();
 const PORT = 3000;
 
-app.set('view engine', 'ejs');
+
+const db = 'mongodb+srv://Pavel:529440@cluster0.x0pym.mongodb.net/node-block?retryWrites=true&w=majority';
+
+mongoose
+  .connect(db)
+  .then((res)=> console.log('Successfuly connected to DB'))
+  .catch((error)=> console.log('Error connecting to'))
 
 const createPath = (page) => path.resolve(__dirname, 'ejs-views', `${page}.ejs`);
 
@@ -13,12 +27,13 @@ app.listen(PORT,  (error)=>{
   error ? console.error(error) : console.log(`listening to port ${PORT}`);
 });
 
-
-
 app.use(express.static('styles'));
+
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
+app.use(express.urlencoded({extended: false}));
 
+app.use(methodOverride('_method'));
 
 app.get('/', (req, res)=>{
   const title = "Home";
@@ -27,33 +42,18 @@ app.get('/', (req, res)=>{
 
 app.get('/contacts', (req, res)=>{
   const title = "Contacts";
-  const contacts = [
-    { name: 'YouTube', link: 'http://youtube.com/YauhenKavalchuk' },
-    { name: 'Twitter', link: 'http://github.com/YauhenKavalchuk' },
-    { name: 'GitHub', link: 'http://twitter.com/YauhenKavalchuk' },
-  ];
-  res.render(createPath('contacts'), {contacts, title});
+  Contact
+      .find()
+      .then((contacts)=> res.render(createPath('contacts'), {contacts, title}))
+      .catch((error) => {
+        console.log(error);
+        res.render(createPath('error'), {title: "Error"})
+      });
+ 
 })
 
 app.get('/about-us', (req, res)=>{
   res.redirect('/contacts');
-});
-
-
-app.get('/posts/:id', (req,res)=>{
-  const title = "Post"
-  res.render(createPath('post'), {title});
-});
-
-app.get('/posts', (req,res)=>{
-  const title = "Posts";
-  res.render(createPath('posts'), {title});
-});
-
-
-app.get('/add-post', (req,res)=>{
-  const title = "Add post";
-  res.render(createPath('add-post'), {title});
 });
 
 
